@@ -11,3 +11,6 @@ wheels/
 
 *.env
 tests/
+
+alembic/
+*.ini
