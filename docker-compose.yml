@@ -1,0 +1,20 @@
+
+
+services:
+  app-service:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    env_file:
+      - app/.env
+    network_mode: host
+
+  user_app:
+    build:
+      context: .
+      dockerfile: user_app/Dockerfile
+    env_file:
+      - user_app/.env
+    network_mode: host
+
+    

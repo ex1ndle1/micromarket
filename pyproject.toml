@@ -1,0 +1,14 @@
+[project]
+name = "fast-api"
+version = "0.1.0"
+description = "FastAPI project for Telegram messages"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi[standard]>=0.136.3",
+    "pydantic>=2.13.4",
+    "sqlalchemy[asyncio]>=2.0.50",
+    "python-dotenv>=1.0.0",
+    "alembic>=1.18.4",
+]
