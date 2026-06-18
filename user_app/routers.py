@@ -21,3 +21,4 @@ async def post_user(msg : UserValidation ,  db : AsyncSession= Depends(get_db) )
     except HTTPException as e:
         await db.rollback()
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='this message from user already exists')
+

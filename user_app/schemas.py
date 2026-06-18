@@ -4,5 +4,5 @@ from pydantic import Field, BaseModel
 
 class UserValidation(BaseModel):
    
-    username : str= Field(gt=2)
-    card_number : int = Field(ge=1)
+    username : str= Field(min_length=2)
+    card_number : int = Field(ge=1_000_000_000_000_000, le=9_999_999_999_999_999)
