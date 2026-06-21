@@ -481,6 +481,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "sqlalchemy", extra = ["asyncio"] },
+    { name = "starlette" },
 ]
 
 [package.metadata]
@@ -495,6 +496,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.13.4" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.50" },
+    { name = "starlette", specifier = ">=1.2.1" },
 ]
 
 [[package]]

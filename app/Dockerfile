@@ -9,5 +9,8 @@ COPY pyproject.toml uv.lock ./
 RUN uv pip install --system --no-cache-dir .
 
 COPY ./app /code/app
+COPY ./celery_app /code/celery_app
+COPY  GeoLite2-Country.mmdb /code/GeoLite2-Country.mmdb
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "&&" , "celery" , "-A" , "app.currency" , "worker" , "--loglevel=INFO" , "-B" ]
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000" ]
