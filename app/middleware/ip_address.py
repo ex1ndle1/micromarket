@@ -41,5 +41,5 @@ class RealIPMiddleware:
         # Записываем определенный IP в scope, чтобы он был доступен в FastAPI
         scope["state"] = scope.get("state", {})
         scope["state"]["user_ip"] = client_ip
-        
+
         await self.app(scope, receive, send)

@@ -1,5 +1,5 @@
 [project]
-name = "fast-api"
+name = "narco-empire"
 version = "0.1.0"
 description = "FastAPI project for Telegram messages"
 readme = "README.md"
@@ -17,3 +17,6 @@ dependencies = [
     "geoip2>=5.2.0",
     "starlette>=1.2.1",
 ]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

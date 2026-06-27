@@ -1,0 +1,39 @@
+name: UV and Docker CI
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Настраиваем Buildx для поддержки кэша
+      - name: Set up Docker Buildx
+        uses: actions/setup-docker-buildx-action@v3
+
+      # Собираем образ приложения с использованием встроенного кэша GitHub Actions
+      - name: Build Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          load: true
+          tags: my-app:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Поднимаем окружение (например, если нужна БД) и запускаем тесты внутри собранного образа
+      - name: Run Tests
+        run: |
+          # Если для тестов нужна БД, можно использовать docker compose:
+          # docker compose run --rm app uv run pytest
+          # Если БД не нужна:
+          docker run --rm my-app:latest uv run pytest
