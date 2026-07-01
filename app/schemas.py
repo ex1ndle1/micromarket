@@ -1,9 +1,9 @@
 from pydantic import BaseModel, Field, ConfigDict
+from decimal import Decimal
 
 
-class TelegramMessage(BaseModel):
+class ProductValid(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    
-    author_id: int = Field(gt=0)
-    text: str = Field(min_length=1)
+    title : str  = Field(min_length=1)
+    price : Decimal = Field(max_digits=10 , decimal_places=2, gt=0)

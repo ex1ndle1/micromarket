@@ -1,23 +1,26 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 from user_app.schemas import UserValidation
-from fastapi import APIRouter, status, Depends, HTTPException, Query , Request
+from fastapi import APIRouter, status, Depends, HTTPException
 from user_app.databases import get_db
 from user_app.models import UserModel
 
 
-user_router  =  APIRouter(prefix='/user')
+user_router = APIRouter(prefix='/user')
+
 
 @user_router.post('/register')
-async def post_user(msg : UserValidation ,  db : AsyncSession= Depends(get_db) ):
+async def post_user(msg: UserValidation, db: AsyncSession = Depends(get_db)):
     new_user = UserModel(
         username=msg.username,
         card_number=msg.card_number
     )
-    try: 
+    try:
         db.add(new_user)
         await db.commit()
         await db.refresh(new_user)
         return {'created'}
-    except HTTPException as e:
+    except IntegrityError :
         await db.rollback()
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='this message from user already exists')
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"error")
+

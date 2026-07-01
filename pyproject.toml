@@ -1,5 +1,5 @@
 [project]
-name = "fast-api"
+name = "narco-empire"
 version = "0.1.0"
 description = "FastAPI project for Telegram messages"
 readme = "README.md"
@@ -11,4 +11,14 @@ dependencies = [
     "sqlalchemy[asyncio]>=2.0.50",
     "python-dotenv>=1.0.0",
     "alembic>=1.18.4",
+    "faststream[rabbit]>=0.7.1",
+    "celery[redis]>=5.6.3",
+    "httpx>=0.28.1",
+    "geoip2>=5.2.0",
+    "starlette>=1.2.1",
+    "jwt>=1.4.0",
+    "passlib>=1.7.4",
 ]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
