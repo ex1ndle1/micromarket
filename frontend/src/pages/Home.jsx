@@ -14,9 +14,9 @@ export default function Home() {
   return (
     <div className="page">
       <div className="hero">
-        <h1>Narco Empire</h1>
-        <p className="tagline">Built Different. Built Dirty.</p>
-        <p>Underground logistics & distribution network</p>
+        <h1>Empire Market</h1>
+        <p className="tagline">Built Different.</p>
+        <p>Global logistics & distribution network</p>
       </div>
 
       <div className="card-grid" style={{ marginTop: '2rem' }}>

@@ -3,11 +3,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from decimal import Decimal, ROUND_HALF_UP
-
 from app.databases import get_db
 from app.models import ProductModel
 from app.schemas import ProductValid
-
 import httpx
 import geoip2.database
 import os
@@ -18,6 +16,8 @@ path = os.getenv('geo_lite_path')
 READER = geoip2.database.Reader(path)
 message_router = APIRouter(prefix='/market')
 
+def set_curr(ip):
+    pass
 
 def get_country(ip):
     response = READER.country(ip)
@@ -32,7 +32,7 @@ def get_curr(curr_code):
     return redis.hget('currencies', curr_code)
 
 
-def price_decimal_rounding(price: float, curr: float) -> float:
+def price_decimal_rounding(price, curr):
     curr = Decimal(str(curr))
     price = Decimal(str(price))
     rounded_price = price.quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
@@ -54,10 +54,35 @@ async def post_product(msg: ProductValid, db: AsyncSession = Depends(get_db)):
 
 
 @message_router.get('/products')
-async def list_products(db: AsyncSession = Depends(get_db)):
+async def list_products(req : Request, db: AsyncSession = Depends(get_db) ):
     query = select(ProductModel).order_by(ProductModel.id)
     res = await db.scalars(query)
-    return res.all()
+    products = res.all()
+    user_ip = req.state.user_ip
+
+    if user_ip == '127.0.0.1':
+            curr = redis.get('user:local:curr')
+            if not curr:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get("https://api.ipify.org?format=json", timeout=3.0)
+                    external_ip = response.json().get("ip")
+                    cnt = get_country(external_ip)
+                    curr_code = get_curr_code(cnt)
+                    curr = get_curr(curr_code)
+                    redis.set('user:local:curr', curr, ex=28800)
+    else:
+            cnt = get_country(user_ip)
+            curr_code = get_curr_code(cnt)
+            curr = get_curr(curr_code)
+            # костыль с user_ip
+            redis.set(f'user:{user_ip}:curr', curr, ex=28800)
+    
+    for p in products:
+        p.price = price_decimal_rounding(p.price , curr)
+    for e in products:
+        print(e.price)
+    return products
+
 
 
 @message_router.get('/product')
@@ -76,7 +101,7 @@ async def get_product(
 
         user_ip = request.state.user_ip
         curr = None
-
+                                                        
         if user_ip == '127.0.0.1':
             curr = redis.get('user:local:curr')
             if not curr:
@@ -91,6 +116,7 @@ async def get_product(
             cnt = get_country(user_ip)
             curr_code = get_curr_code(cnt)
             curr = get_curr(curr_code)
+            # костыль с user_ip
             redis.set(f'user:{user_ip}:curr', curr, ex=28800)
 
         if not curr:

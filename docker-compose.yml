@@ -5,11 +5,7 @@ services:
       dockerfile: app/Dockerfile
     env_file:
       - app/.env
-    depends_on:
-      redis:
-        condition: service_started
-    ports:
-      - "8000:8000"
+    network_mode: host
 
   user_app:
     build:
@@ -17,24 +13,14 @@ services:
       dockerfile: user_app/Dockerfile
     env_file:
       - user_app/.env
-    depends_on:
-      redis:
-        condition: service_started
-    ports:
-      - "8001:8001"
+    network_mode: host
 
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
+      - "6380:6379"
+    
+    
   celery_worker:
     build:
       context: .
@@ -59,11 +45,4 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - app-service
-      - user_app
-
-volumes:
-  redis_data:
+    network_mode: host

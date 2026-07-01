@@ -12,7 +12,7 @@ export default function Layout({ children }) {
   return (
     <div className="layout">
       <nav className="nav">
-        <Link to="/" className="nav-logo">Narco Empire</Link>
+        <Link to="/" className="nav-logo">Empire Market</Link>
         <div className="nav-links">
           {links.map((l) => (
             <Link

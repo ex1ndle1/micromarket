@@ -20,7 +20,7 @@ async def post_user(msg: UserValidation, db: AsyncSession = Depends(get_db)):
         await db.commit()
         await db.refresh(new_user)
         return {'created'}
-    except IntegrityError:
+    except IntegrityError :
         await db.rollback()
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='this message from user already exists')
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"error")
 

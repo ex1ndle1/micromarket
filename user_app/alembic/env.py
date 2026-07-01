@@ -1,12 +1,15 @@
 import asyncio
 from logging.config import fileConfig
 from user_app.databases import Base
+from user_app.models import UserModel
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 import os
 from dotenv import load_dotenv
 from alembic import context
+from alembic.config import Config
+
 load_dotenv()
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -43,9 +46,6 @@ def run_migrations_offline() -> None:
     here as well.  By skipping the Engine creation
     we don't even need a DBAPI to be available.
 
-    Calls to context.execute() here emit the given string to the
-    script output.
-
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
@@ -53,14 +53,23 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_schemas=False
+        
     )
 
     with context.begin_transaction():
         context.run_migrations()
 
 
+
+def include_object(obj, name, type_, reflected, compare_to):
+    if type_ == "table" and name not in target_metadata.tables:
+        return False
+    return True
+
+
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(connection=connection, target_metadata=target_metadata, include_schemas=False, include_object=include_object)
 
     with context.begin_transaction():
         context.run_migrations()
